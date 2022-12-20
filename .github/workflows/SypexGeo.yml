@@ -11,7 +11,7 @@ on:
   repository_dispatch:
   workflow_dispatch:
   schedule:
-    - cron: 20 3 */5 * *
+    - cron: 20 3 * * 5
 
 jobs:
   run:
@@ -20,9 +20,9 @@ jobs:
     steps:
     - name: Download SypexGeo
       run: |
-        curl "http://sypexgeo.net/download/files/SxGeoCountry.zip" --output SxGeoCountry.zip
-        curl "http://sypexgeo.net/download/files/SxGeoCity_utf8.zip" --output SxGeoCity_utf8.zip
-        curl "http://sypexgeo.net/download/files/SxGeo_Info.zip" --output SxGeo_Info.zip
+        curl "https://sypexgeo.net/download/files/SxGeoCountry.zip" --output SxGeoCountry.zip
+        curl "https://sypexgeo.net/download/files/SxGeoCity_utf8.zip" --output SxGeoCity_utf8.zip
+        curl "https://sypexgeo.net/download/files/SxGeo_Info.zip" --output SxGeo_Info.zip
         mkdir -p upload
         cp -v SxGeoCountry.zip upload
         cp -v SxGeoCity_utf8.zip upload
