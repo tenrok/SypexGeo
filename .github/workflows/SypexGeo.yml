@@ -22,11 +22,9 @@ jobs:
       run: |
         curl "https://sypexgeo.net/download/files/SxGeoCountry.zip" --output SxGeoCountry.zip
         curl "https://sypexgeo.net/download/files/SxGeoCity_utf8.zip" --output SxGeoCity_utf8.zip
-        curl "https://sypexgeo.net/download/files/SxGeo_Info.zip" --output SxGeo_Info.zip
         mkdir -p upload
         cp -v SxGeoCountry.zip upload
         cp -v SxGeoCity_utf8.zip upload
-        cp -v SxGeo_Info.zip upload 
         echo "TAG_NAME=$(date +"%Y.%m.%d")" >> $GITHUB_ENV
     - name: Push to "download" branch
       run: |
