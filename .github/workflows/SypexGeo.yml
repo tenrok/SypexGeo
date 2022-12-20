@@ -1,0 +1,57 @@
+#
+# This is free software, licensed under the MIT License.
+#
+# https://github.com/tenrok/SypexGeo
+# Description: Publish SypexGeo
+#
+
+name: Publish SypexGeo
+
+on:
+  repository_dispatch:
+  workflow_dispatch:
+  schedule:
+    - cron: 20 3 */5 * *
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+    - name: Download SypexGeo
+      run: |
+        curl "http://sypexgeo.net/download/files/SxGeoCountry.zip" --output SxGeoCountry.zip
+        curl "http://sypexgeo.net/download/files/SxGeoCity_utf8.zip" --output SxGeoCity_utf8.zip
+        curl "http://sypexgeo.net/download/files/SxGeo_Info.zip" --output SxGeo_Info.zip
+        mkdir -p upload
+        cp -v SxGeoCountry.zip upload
+        cp -v SxGeoCity_utf8.zip upload
+        cp -v SxGeo_Info.zip upload 
+        echo "TAG_NAME=$(date +"%Y.%m.%d")" >> $GITHUB_ENV
+    - name: Push to "download" branch
+      run: |
+        cd upload
+        git init
+        git config user.name "${{ github.actor }}"
+        git config user.email "${{ github.actor }}@users.noreply.github.com"
+        git checkout -b download
+        git add .
+        git commit -m "${{ env.TAG_NAME }}"
+        git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
+        git push -f origin download
+    - name: Upload to Releases
+      uses: softprops/action-gh-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ env.TAG_NAME }}
+        body: ${{ env.TAG_NAME }}
+        files: |
+          *.zip
+    - name: Remove old Releases
+      uses: dev-drprasad/delete-older-releases@v0.2.0
+      with:
+        keep_latest: 2
+        delete_tags: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
